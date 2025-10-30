@@ -119,6 +119,10 @@ export default function Register() {
                         {loading ? 'Creating Account...' : 'Sign Up'};
                     </button>
                 </form>
+
+                <p className="auth-link">
+                    Already have an account? <Link to='/login'>Sign In</Link>
+                </p>
             </div>
         </div>
     )
