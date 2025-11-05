@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
             await setDoc(doc(db, 'users', result.user.uid), {
                 displayName: displayName,
                 email: email,
-                createdAt: new Date().toISOString
+                createdAt: new Date().toISOString()
             });
 
             return result;

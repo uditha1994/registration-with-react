@@ -1,0 +1,134 @@
+.dashboard-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 20px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 20px 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+    color: #333;
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.logout-button {
+    padding: 10px 20px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+    background: #c82333;
+    transform: translateY(-1px);
+}
+
+.dashboard-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.user-info-card,
+.features-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.user-info-card h2,
+.features-card h2 {
+    color: #333;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.user-details p {
+    margin: 0;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.user-details strong {
+    color: #555;
+}
+
+.feature-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.feature-item {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.feature-item h3 {
+    margin: 0 0 8px 0;
+    color: #333;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.feature-item p {
+    margin: 0;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .dashboard-content {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .user-info-card,
+    .features-card {
+        padding: 20px;
+    }
+}
