@@ -3,18 +3,34 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 50%, #ff8c42 100%);
     padding: 20px;
+    position: relative;
+}
+
+/* Add subtle pattern overlay */
+.auth-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M20 20c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10zm10 0c0-5.5-4.5-10-10-10s-10 4.5-10 10 4.5 10 10 10 10-4.5 10-10z'/%3E%3C/g%3E%3C/svg%3E");
+    z-index: 1;
 }
 
 .auth-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
     padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
     width: 100%;
     max-width: 400px;
-    backdrop-filter: blur(10px);
+    position: relative;
+    z-index: 2;
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .auth-card h2 {
@@ -23,6 +39,10 @@
     color: #333;
     font-size: 28px;
     font-weight: 600;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .auth-form {
@@ -44,9 +64,9 @@
 }
 
 .form-group input {
-    padding: 12px 16px;
+    padding: 14px 16px;
     border: 2px solid #e1e5e9;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 16px;
     transition: all 0.3s ease;
     background: #f8f9fa;
@@ -54,27 +74,35 @@
 
 .form-group input:focus {
     outline: none;
-    border-color: #667eea;
+    border-color: #ff6b35;
     background: white;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    transform: translateY(-1px);
 }
 
 .auth-button {
-    padding: 14px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 16px;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     margin-top: 10px;
+    position: relative;
+    overflow: hidden;
 }
 
 .auth-button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #e55a2b 0%, #e8851a 100%);
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 15px 30px rgba(255, 107, 53, 0.4);
+}
+
+.auth-button:active {
+    transform: translateY(0);
 }
 
 .auth-button:disabled {
@@ -84,13 +112,14 @@
 }
 
 .error-message {
-    background: #fee;
+    background: linear-gradient(135deg, #fee 0%, #fdd 100%);
     color: #c33;
-    padding: 12px;
-    border-radius: 8px;
+    padding: 12px 16px;
+    border-radius: 10px;
     border: 1px solid #fcc;
     font-size: 14px;
     text-align: center;
+    box-shadow: 0 2px 10px rgba(204, 51, 51, 0.1);
 }
 
 .auth-link {
@@ -100,13 +129,35 @@
 }
 
 .auth-link a {
-    color: #667eea;
+    color: #ff6b35;
     text-decoration: none;
     font-weight: 500;
+    transition: color 0.3s ease;
 }
 
 .auth-link a:hover {
+    color: #e55a2b;
     text-decoration: underline;
+}
+
+/* Add loading animation */
+.auth-button.loading {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    position: relative;
+}
+
+.auth-button.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
 }
 
 /* Responsive design */
@@ -117,5 +168,43 @@
 
     .auth-card {
         padding: 30px 20px;
+        border-radius: 16px;
+    }
+
+    .auth-card h2 {
+        font-size: 24px;
+    }
+}
+
+/* Add subtle animations */
+.auth-card {
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-group input {
+    animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
     }
 }

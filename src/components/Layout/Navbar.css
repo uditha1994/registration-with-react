@@ -1,9 +1,12 @@
+/* Modern navigation styles with orange theme */
 .navbar {
-    background: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 20px rgba(255, 107, 53, 0.1);
     position: sticky;
     top: 0;
     z-index: 1000;
+    border-bottom: 1px solid rgba(255, 107, 53, 0.1);
 }
 
 .nav-container {
@@ -19,13 +22,28 @@
 .nav-logo {
     font-size: 24px;
     font-weight: 700;
-    color: #667eea;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
 }
 
-.nav-logo:hover {
-    color: #764ba2;
+.nav-logo::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    transition: width 0.3s ease;
+}
+
+.nav-logo:hover::after {
+    width: 100%;
 }
 
 .nav-menu {
@@ -45,46 +63,94 @@
     color: #555;
     font-weight: 500;
     font-size: 14px;
+    padding: 8px 12px;
+    background: linear-gradient(135deg, #fff5f0 0%, #ffe8d6 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 107, 53, 0.2);
 }
 
 .nav-link {
     color: #555;
     text-decoration: none;
     font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 6px;
+    padding: 10px 18px;
+    border-radius: 8px;
     transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(247, 147, 30, 0.1) 100%);
+    transition: left 0.3s ease;
+}
+
+.nav-link:hover::before {
+    left: 0;
 }
 
 .nav-link:hover {
-    color: #667eea;
-    background: #f8f9fa;
+    color: #ff6b35;
+    transform: translateY(-1px);
 }
 
 .nav-register {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
     color: white !important;
+    box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+    border: none;
+}
+
+.nav-register::before {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .nav-register:hover {
-    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #e55a2b 0%, #e8851a 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+    color: white !important;
 }
 
 .nav-logout {
-    background: #dc3545;
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
+    padding: 10px 18px;
+    border-radius: 8px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
 }
 
 .nav-logout:hover {
-    background: #c82333;
-    transform: translateY(-1px);
+    background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+}
+
+/* Add notification badge style */
+.nav-notification {
+    position: relative;
+}
+
+.nav-notification::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 8px;
+    height: 8px;
+    background: #ff6b35;
+    border-radius: 50%;
+    animation: pulse-orange 2s infinite;
 }
 
 /* Responsive design */
@@ -104,7 +170,7 @@
 
     .nav-user,
     .nav-auth {
-        gap: 10px;
+        gap: 8px;
     }
 
     .nav-username {
@@ -113,7 +179,107 @@
 
     .nav-link,
     .nav-logout {
-        padding: 6px 12px;
+        padding: 8px 14px;
         font-size: 14px;
     }
+}
+
+@media (max-width: 480px) {
+    .nav-container {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 10px 15px;
+    }
+
+    .nav-menu {
+        width: 100%;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .nav-user,
+    .nav-auth {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
+
+/* Add smooth slide-in animation for navbar */
+.navbar {
+    animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Add hover effect for the entire navbar */
+.navbar:hover {
+    box-shadow: 0 6px 25px rgba(255, 107, 53, 0.15);
+}
+
+/* Active link styling */
+.nav-link.active {
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.1) 0%, rgba(247, 147, 30, 0.1) 100%);
+    color: #ff6b35;
+    font-weight: 600;
+}
+
+/* Mobile menu toggle (for future enhancement) */
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.nav-toggle span {
+    width: 25px;
+    height: 3px;
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    margin: 3px 0;
+    transition: 0.3s;
+    border-radius: 2px;
+}
+
+@media (max-width: 480px) {
+    .nav-toggle {
+        display: flex;
+    }
+}
+
+/* Add subtle glow effect to important elements */
+.nav-register,
+.nav-logout {
+    position: relative;
+}
+
+.nav-register::after,
+.nav-logout::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 8px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.3), rgba(247, 147, 30, 0.3));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.nav-register:hover::after,
+.nav-logout:hover::after {
+    opacity: 1;
 }
