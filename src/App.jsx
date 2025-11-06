@@ -5,6 +5,7 @@ import Navbar from './components/Layout/Navbar';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Dashboard from './components/Dashboard/Dashboard'
+import CompanyRegistration from './components/Auth/CompanyRegistration';
 
 //protected route component
 function ProtectedRoute({ children }) {
@@ -54,6 +55,9 @@ function App() {
             } />
             <Route path='/register' element={
               <PublicRoute><Register /></PublicRoute>
+            } />
+            <Route path='/company' element={
+              <PublicRoute><CompanyRegistration /></PublicRoute>
             } />
             {/* private route */}
             <Route path='/dashboard' element={

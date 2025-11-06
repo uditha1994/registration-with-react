@@ -6,10 +6,17 @@ import './AuthForm.css';
 export default function Register() {
     //Form state management
     const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
         displayName: '',
         email: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        location: '',
+        industry: '',
+        experience: '',
+        skills: '',
+        rwsume: '',
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);

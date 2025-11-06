@@ -39,6 +39,7 @@ export default function Navbar() {
                         <div className="nav-auth">
                             <Link to='/login' className="nav-link">Login</Link>
                             <Link to='/register' className="nav-link nav-register">Register</Link>
+                            <Link to='/company' className="nav-link nav-register">Company</Link>
                         </div>
                     )}
                 </div>
