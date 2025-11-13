@@ -47,7 +47,45 @@ export default function JobSearch({ onSearch }) {
 
     return (
         <div className="job-search">
+            <div className="search-container">
+                <form
+                    onSubmit={handleSearch}
+                    className="search-form"
+                >
+                    <div className="search-main">
+                        <div className="search-input-group">
+                            <input
+                                type="text"
+                                placeholder="Search jobs, companies"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="search-input"
+                            />
+                            <button type="submit" className="search-button">
+                                <span>🔎</span> Search
+                            </button>
+                        </div>
+                    </div>
 
+                    <div className="search-filters">
+                        <div className="filter-row">
+                            <select
+                                value={filters.location}
+                                onChange={(e) => handleFilterChange
+                                    ('location', e.target.value)}
+                                className="filter-select"
+                            >
+                                <option value="all">All Job Types</option>
+                                {Object.values(JOB_TYPES).map(type => (
+                                    <option key={type} value={type}>
+                                        {type}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
     )
 }
