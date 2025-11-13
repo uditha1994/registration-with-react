@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { useNavigate, Link } from "react-router-dom";
-import { validateURL } from '../../utils/helpers';
+import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate, Link } from 'react-router-dom';
 import { INDUSTRIES } from '../../utils/constants';
+import { validateURL } from '../../utils/helpers';
 import './AuthForm.css';
 
-export default function CompanyRegistration() {
+export default function CompanyRegister() {
     const [formData, setFormData] = useState({
         companyName: '',
         email: '',
@@ -17,28 +17,28 @@ export default function CompanyRegistration() {
         location: '',
         description: '',
         logo: '',
-        contactPhone: '',
-        contactPerson: ''
+        contactPerson: '',
+        contactPhone: ''
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const { sigupCompany } = useAuth();
+    const { signupCompany } = useAuth();
     const navigate = useNavigate();
 
     function handleChange(e) {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
-        })
+        });
     }
 
     async function handleSubmit(e) {
         e.preventDefault();
 
-        //validations
+        // Validation
         if (formData.password !== formData.confirmPassword) {
-            return setError('Password do not match');
+            return setError('Passwords do not match');
         }
 
         if (formData.password.length < 6) {
@@ -57,6 +57,7 @@ export default function CompanyRegistration() {
             setError('');
             setLoading(true);
 
+            // Prepare company data
             const companyData = {
                 companyName: formData.companyName,
                 website: formData.website,
@@ -65,18 +66,17 @@ export default function CompanyRegistration() {
                 location: formData.location,
                 description: formData.description,
                 logo: formData.logo,
-                contactPhone: formData.contactPhone,
-                contactPerson: formData.contactPerson
-            }
+                contactPerson: formData.contactPerson,
+                contactPhone: formData.contactPhone
+            };
 
-            await sigupCompany(formData.email, formData.password, companyData);
+            await signupCompany(formData.email, formData.password, companyData);
             navigate('/dashboard');
-
         } catch (error) {
-            console.error('Failed to create Company Account', error);
-        } finally {
-            setLoading(false);
+            setError('Failed to create company account: ' + error.message);
         }
+
+        setLoading(false);
     }
 
     return (
@@ -112,64 +112,95 @@ export default function CompanyRegistration() {
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="confirmPassword">Confirm Password</label>
-                        <input
-                            type="password"
-                            id="confirmPassword"
-                            name="confirmPassword"
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            required
-                            placeholder="Confirm Password"
-                        />
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label htmlFor="password">Password</label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                                placeholder="Enter password"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="confirmPassword">Confirm Password</label>
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                required
+                                placeholder="Confirm password"
+                            />
+                        </div>
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="website">Company Website</label>
-                        <input
-                            type="url"
-                            id="website"
-                            name="website"
-                            value={formData.website}
-                            onChange={handleChange}
-                            required
-                            placeholder="https://yourcompany.com"
-                        />
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label htmlFor="website">Company Website</label>
+                            <input
+                                type="url"
+                                id="website"
+                                name="website"
+                                value={formData.website}
+                                onChange={handleChange}
+                                placeholder="https://yourcompany.com"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="logo">Company Logo URL</label>
+                            <input
+                                type="url"
+                                id="logo"
+                                name="logo"
+                                value={formData.logo}
+                                onChange={handleChange}
+                                placeholder="https://yourcompany.com/logo.png"
+                            />
+                        </div>
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="industry">Industry</label>
-                        <select
-                            name="industry"
-                            id="industry"
-                            value={formData.industry}
-                            onChange={handleChange}
-                        >
-                            <option value="">Select industry</option>
-                            {INDUSTRIES.map(industry => (
-                                <option value={industry} key={industry}>{industry}</option>
-                            ))}
-                        </select>
-                    </div>
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label htmlFor="industry">Industry</label>
+                            <select
+                                id="industry"
+                                name="industry"
+                                value={formData.industry}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Select Industry</option>
+                                {INDUSTRIES.map(industry => (
+                                    <option key={industry} value={industry}>{industry}</option>
+                                ))}
+                            </select>
+                        </div>
 
-                    <div className="form-group">
-                        <label htmlFor="companySize">Company Size</label>
-                        <select
-                            name="companySize"
-                            id="companySize"
-                            value={formData.companySize}
-                            onChange={handleChange}
-                            required
-                        >
-                            <option value="">Select Size</option>
-                            <option value="1-10">1-10 eemployees</option>
-                            <option value="11-50">11-50 eemployees</option>
-                            <option value="51-150">51-150 eemployees</option>
-                            <option value="151-500">152-500 eemployees</option>
-                            <option value="580-1000">580-1000 employee</option>
-                            <option value="1000+">1000+ employees</option>
-                        </select>
+                        <div className="form-group">
+                            <label htmlFor="companySize">Company Size</label>
+                            <select
+                                id="companySize"
+                                name="companySize"
+                                value={formData.companySize}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Select Size</option>
+                                <option value="1-10">1-10 employees</option>
+                                <option value="11-50">11-50 employees</option>
+                                <option value="51-200">51-200 employees</option>
+                                <option value="201-500">201-500 employees</option>
+                                <option value="501-1000">501-1000 employees</option>
+                                <option value="1000+">1000+ employees</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div className="form-group">
@@ -188,41 +219,40 @@ export default function CompanyRegistration() {
                     <div className="form-group">
                         <label htmlFor="description">Company Description</label>
                         <textarea
-                            type="text"
                             id="description"
                             name="description"
                             value={formData.description}
                             onChange={handleChange}
-                            rows={4}
-                            required
-                            placeholder="Brief description about company"
+                            rows="4"
+                            placeholder="Brief description of your company"
                         />
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="contactPerson">Contact Person</label>
-                        <textarea
-                            type="text"
-                            id="contactPerson"
-                            name="contactPerson"
-                            value={formData.contactPerson}
-                            onChange={handleChange}
-                            required
-                            placeholder="Contact person name here"
-                        />
-                    </div>
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label htmlFor="contactPerson">Contact Person</label>
+                            <input
+                                type="text"
+                                id="contactPerson"
+                                name="contactPerson"
+                                value={formData.contactPerson}
+                                onChange={handleChange}
+                                required
+                                placeholder="HR Manager / Recruiter name"
+                            />
+                        </div>
 
-                    <div className="form-group">
-                        <label htmlFor="contactPhone">Contact Phone</label>
-                        <textarea
-                            type="tel"
-                            id="contactPhone"
-                            name="contactPhone"
-                            value={formData.contactPhone}
-                            onChange={handleChange}
-                            required
-                            placeholder="Contact phone number"
-                        />
+                        <div className="form-group">
+                            <label htmlFor="contactPhone">Contact Phone</label>
+                            <input
+                                type="tel"
+                                id="contactPhone"
+                                name="contactPhone"
+                                value={formData.contactPhone}
+                                onChange={handleChange}
+                                placeholder="Contact phone number"
+                            />
+                        </div>
                     </div>
 
                     <button
@@ -235,13 +265,12 @@ export default function CompanyRegistration() {
                 </form>
 
                 <p className="auth-link">
-                    Already have an account? <Link to='/login'>Sign In</Link>
+                    Already have an account? <Link to="/login">Sign In</Link>
                 </p>
                 <p className="auth-link">
-                    Looking for a job? <Link to='/register'>Register as Job Seeker</Link>
+                    Looking for a job? <Link to="/register">Register as Job Seeker</Link>
                 </p>
             </div>
         </div>
-    )
-
+    );
 }

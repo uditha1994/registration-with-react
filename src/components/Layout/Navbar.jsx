@@ -20,7 +20,7 @@ export default function Navbar() {
         <nav className="navbar">
             <div className="nav-container">
                 <Link to="/" className="nav-logo">
-                    Registration</Link>
+                    WORK:MANGO</Link>
 
                 <div className="nav-menu">
                     {currentUser ? (
