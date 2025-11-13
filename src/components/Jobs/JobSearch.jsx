@@ -75,6 +75,20 @@ export default function JobSearch({ onSearch }) {
                                     ('location', e.target.value)}
                                 className="filter-select"
                             >
+                                <option value="all">All Locations</option>
+                                {Object.values(location).map(type => (
+                                    <option key={location} value={location}>
+                                        {location}
+                                    </option>
+                                ))}
+                            </select>
+
+                            <select
+                                value={filters.jobType}
+                                onChange={(e) => handleFilterChange
+                                    ('jobType', e.target.value)}
+                                className="filter-select"
+                            >
                                 <option value="all">All Job Types</option>
                                 {Object.values(JOB_TYPES).map(type => (
                                     <option key={type} value={type}>
@@ -82,7 +96,59 @@ export default function JobSearch({ onSearch }) {
                                     </option>
                                 ))}
                             </select>
+
+                            <select
+                                value={filters.experienceLevel}
+                                onChange={(e) => handleFilterChange
+                                    ('experienceLevel', e.target.value)}
+                                className="filter-select"
+                            >
+                                <option value="all">All Experience Level</option>
+                                {Object.values(EXPERIENCE_LEVELS).map(level => (
+                                    <option key={level} value={level}>
+                                        {level}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
+
+                        {showAdvanced && (
+                            <div className="filter-row advanced">
+                                <select
+                                    value={filters.industry}
+                                    onChange={(e) => handleFilterChange
+                                        ('industry', e.target.value)}
+                                    className="filter-select"
+                                >
+                                    <option value="all">All Industry</option>
+                                    {Object.values(INDUSTRIES).map(industry => (
+                                        <option key={industry} value={industry}>
+                                            {industry}
+                                        </option>
+                                    ))}
+                                </select>
+
+                                <select
+                                    value={filters.salaryRange}
+                                    onChange={(e) => handleFilterChange
+                                        ('salaryRange', e.target.value)}
+                                    className="filter-select"
+                                >
+                                    <option value="all">All Salary Range</option>
+                                    <option value="0-30K">0-30K</option>
+                                    <option value="30K-50K">30K - 50K</option>
+                                    <option value="50K-75K">50K - 75K</option>
+                                    <option value="75K-100K">75K-100K</option>
+                                    <option value="100K-150K">100K - 150K</option>
+                                </select>
+
+                                <button type="button"
+                                    onClick={clearFilters}
+                                    className="clear-filters"
+                                >
+                                    Clear All</button>
+                            </div>
+                        )}
                     </div>
                 </form>
             </div>
