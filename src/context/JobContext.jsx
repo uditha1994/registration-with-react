@@ -208,6 +208,17 @@ export function JobProvider({ children }) {
     }
 
     //delete job
+    async function deleteJob(jobId) {
+        try {
+            if (!currentUser || userProfile?.userType !== 'company') {
+                throw new Error('Only companies can delete jobs');
+            }
+            await deleteDoc(doc(db, 'jobs', jobId));
+            return true;
+        } catch (error) {
+            throw error;
+        }
+    }
 
     //apply to job
     async function applyToJob(jobId, applicationData) {
@@ -226,9 +237,89 @@ export function JobProvider({ children }) {
             };
 
             await addDoc(collection(db, 'applications'), application);
-        } catch (error) {
 
+            // Update job applications count
+            const jobRef = doc(db, 'jobs', jobId);
+            const jobDoc = await getDoc(jobRef);
+            if (jobDoc.exists()) {
+                const currentCount = jobDoc.data().applicationsCount || 0;
+                await updateDoc(jobRef, {
+                    applicationsCount: currentCount + 1
+                });
+            }
+
+            return true;
+        } catch (error) {
+            throw error;
         }
     }
+
+    // Get applications for a job
+    async function getJobApplications(jobId) {
+        try {
+            if (!currentUser || userProfile?.userType !== 'company') {
+                throw new Error('Only companies can view applications');
+            }
+            const applicationsQuery = query(
+                collection(db, 'applications'),
+                where('jobId', '==', jobId),
+                orderBy('appliedAt', 'desc')
+            );
+
+            const snapshot = await getDocs(applicationsQuery);
+            return snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        } catch (error) {
+            console.error('Error fetching applications:', error);
+            throw error;
+        }
+    }
+
+    // Get user's applications (job seeker view)
+    async function getUserApplications() {
+        try {
+            if (!currentUser || userProfile?.userType !== 'job_seeker') {
+                return [];
+            }
+            const applicationsQuery = query(
+                collection(db, 'applications'),
+                where('applicantId', '==', currentUser.uid),
+                orderBy('appliedAt', 'desc')
+            );
+
+            const snapshot = await getDocs(applicationsQuery);
+            return snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+        } catch (error) {
+            console.error('Error fetching user applications:', error);
+            throw error;
+        }
+    }
+
+    const value = {
+        jobs,
+        loading,
+        hasMore,
+        postJob,
+        fetchJobs,
+        searchJobs,
+        getJobById,
+        getCompanyJobs,
+        updateJob,
+        deleteJob,
+        applyToJob,
+        getJobApplications,
+        getUserApplications
+    };
+
+    return (
+        <JobContext.Provider value={value}>
+            {children}
+        </JobContext.Provider>
+    );
 
 } 
