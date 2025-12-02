@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { JOB_TYPES, EXPERIENCE_LEVELS, LOCATION, INDUSTRIES } from "../../utils/constants";
+import { JOB_TYPES, EXPERIENCE_LEVELS, LOCATIONS, INDUSTRIES } from "../../utils/constants";
 import './jobs.css';
 
 export default function JobSearch({ onSearch }) {
