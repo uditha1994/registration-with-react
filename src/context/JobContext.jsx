@@ -23,26 +23,37 @@ export function JobProvider({ children }) {
     const [hasMore, setHasMore] = useState(true);
     const { currentUser, userProfile } = useAuth();
 
-    //post a new job 
+    // Post a new job (companies only)
     async function postJob(jobData) {
         try {
-            if (!currentUser || userProfile?.userType !== 'company') {
+            if (!currentUser) {
+                throw new Error('You must be logged in to post a job');
+            }
+
+            if (!userProfile || userProfile.userType !== 'company') {
                 throw new Error('Only companies can post jobs');
             }
+
+            console.log('Current user:', currentUser.uid); // Debug log
+            console.log('User profile:', userProfile); // Debug log
+            console.log('Job data being posted:', jobData); // Debug log
+
+            // Ensure the job data includes the company ID
             const jobDoc = {
                 ...jobData,
                 companyId: currentUser.uid,
-                companyName: userProfile.companyName,
-                companyLogo: userProfile.logo || '',
                 postedAt: serverTimestamp(),
-                updatedAt: serverTimestamp(),
-                isActive: true,
-                applicationCount: 0
+                updatedAt: serverTimestamp()
             };
 
-            const docref = await addDoc(collection(db, 'jobs'), jobDoc);
-            return docref.id;
+            console.log('Final job document:', jobDoc); // Debug log
+
+            const docRef = await addDoc(collection(db, 'jobs'), jobDoc);
+            console.log('Job posted with ID:', docRef.id); // Debug log
+
+            return docRef.id;
         } catch (error) {
+            console.error('Error in postJob function:', error);
             throw error;
         }
     }

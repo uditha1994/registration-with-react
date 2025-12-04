@@ -8,7 +8,7 @@ import './Jobs.css';
 export default function PostJob() {
     const navigate = useNavigate();
     const { postJob } = useJobs();
-    const { userProfile } = useAuth();
+    const { userProfile, currentUser } = useAuth();
 
     const [formData, setFormData] = useState({
         title: '',
@@ -55,18 +55,53 @@ export default function PostJob() {
             setLoading(true);
             setError('');
 
-            // Prepare job data
+            // Validate user is a company
+            if (!currentUser) {
+                throw new Error('You must be logged in to post a job');
+            }
+
+            if (!userProfile || userProfile.userType !== 'company') {
+                throw new Error('Only companies can post jobs');
+            }
+
+            // Prepare job data with proper validation
             const jobData = {
-                ...formData,
+                title: formData.title.trim(),
+                description: formData.description.trim(),
+                requirements: formData.requirements.trim(),
+                benefits: formData.benefits.trim(),
+                location: formData.location,
+                jobType: formData.jobType,
+                experienceLevel: formData.experienceLevel,
+                industry: formData.industry,
                 salaryMin: formData.salaryMin ? parseInt(formData.salaryMin) : null,
                 salaryMax: formData.salaryMax ? parseInt(formData.salaryMax) : null,
-                skills: formData.skills.split(',').map(skill => skill.trim()).filter(skill => skill),
-                applicationDeadline: formData.applicationDeadline ? new Date(formData.applicationDeadline) : null
+                skills: formData.skills ? formData.skills.split(',').map(skill => skill.trim()).filter(skill => skill) : [],
+                applicationDeadline: formData.applicationDeadline ? new Date(formData.applicationDeadline) : null,
+                contactEmail: formData.contactEmail.trim(),
+
+                // Company information from user profile
+                companyId: currentUser.uid,
+                companyName: userProfile.companyName,
+                companyLogo: userProfile.logo || '',
+                companyWebsite: userProfile.website || '',
+                companyDescription: userProfile.description || '',
+
+                // Metadata
+                isActive: true,
+                applicationsCount: 0,
+                createdAt: new Date(),
+                updatedAt: new Date()
             };
 
+            console.log('Posting job with data:', jobData); // Debug log
+
             const jobId = await postJob(jobData);
+            console.log('Job posted successfully with ID:', jobId); // Debug log
+
             navigate(`/jobs/${jobId}`);
         } catch (error) {
+            console.error('Error posting job:', error);
             setError('Failed to post job: ' + error.message);
         } finally {
             setLoading(false);
