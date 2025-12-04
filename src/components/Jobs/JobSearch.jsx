@@ -71,43 +71,44 @@ export default function JobSearch({ onSearch }) {
                         <div className="filter-row">
                             <select
                                 value={filters.location}
-                                onChange={(e) => handleFilterChange
-                                    ('location', e.target.value)}
+                                onChange={(e) => handleFilterChange('location', e.target.value)}
                                 className="filter-select"
                             >
                                 <option value="all">All Locations</option>
-                                {Object.values(location).map(type => (
-                                    <option key={location} value={location}>
-                                        {location}
-                                    </option>
+                                {LOCATIONS.map((location, index) => (
+                                    <option key={`location-${index}`} value={location}>{location}</option>
                                 ))}
                             </select>
-
                             <select
                                 value={filters.jobType}
-                                onChange={(e) => handleFilterChange
-                                    ('jobType', e.target.value)}
+                                onChange={(e) => handleFilterChange('jobType', e.target.value)}
                                 className="filter-select"
                             >
                                 <option value="all">All Job Types</option>
-                                {Object.values(JOB_TYPES).map(type => (
-                                    <option key={type} value={type}>
-                                        {type}
-                                    </option>
+                                {Object.values(JOB_TYPES).map((type, index) => (
+                                    <option key={`jobtype-${index}`} value={type}>{type}</option>
                                 ))}
                             </select>
 
                             <select
                                 value={filters.experienceLevel}
-                                onChange={(e) => handleFilterChange
-                                    ('experienceLevel', e.target.value)}
+                                onChange={(e) => handleFilterChange('experienceLevel', e.target.value)}
                                 className="filter-select"
                             >
-                                <option value="all">All Experience Level</option>
-                                {Object.values(EXPERIENCE_LEVELS).map(level => (
-                                    <option key={level} value={level}>
-                                        {level}
-                                    </option>
+                                <option value="all">All Experience Levels</option>
+                                {Object.values(EXPERIENCE_LEVELS).map((level, index) => (
+                                    <option key={`experience-${index}`} value={level}>{level}</option>
+                                ))}
+                            </select>
+
+                            <select
+                                value={filters.industry}
+                                onChange={(e) => handleFilterChange('industry', e.target.value)}
+                                className="filter-select"
+                            >
+                                <option value="all">All Industries</option>
+                                {INDUSTRIES.map((industry, index) => (
+                                    <option key={`industry-${index}`} value={industry}>{industry}</option>
                                 ))}
                             </select>
                         </div>

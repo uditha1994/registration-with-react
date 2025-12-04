@@ -47,43 +47,57 @@ export function JobProvider({ children }) {
         }
     }
 
-    //fetch jobs - with filters & pagination
+    // Fetch jobs with pagination and filters
     async function fetchJobs(filters = {}, loadMore = false) {
         try {
             setLoading(true);
 
-            const jobQuery = collection(db, 'jobs');
-            let contsrains = [where('isActive', '===', true)];
+            const jobCollection = collection(db, 'jobs');
+            let constraints = [where('isActive', '==', true)];
 
-            //apply filters
+            // Only add one filter at a time to avoid complex index requirements
+            // Priority order: location > jobType > experienceLevel > industry
             if (filters.location && filters.location !== 'all') {
-                contsrains.push(where('location', '==', filters.location));
-            }
-            if (filters.jobType && filters.jobType !== 'all') {
-                contsrains.push(where('jobType', '==', filters.jobType));
-            }
-            if (filters.experienceLevel && filters.experienceLevel !== 'all') {
-                contsrains.push(where('experienceLevel', '==', filters.experienceLevel));
-            }
-            if (filters.industry && filters.industry !== 'all') {
-                contsrains.push(where('industry', '==', filters.industry));
+                constraints.push(where('location', '==', filters.location));
+            } else if (filters.jobType && filters.jobType !== 'all') {
+                constraints.push(where('jobType', '==', filters.jobType));
+            } else if (filters.experienceLevel && filters.experienceLevel !== 'all') {
+                constraints.push(where('experienceLevel', '==', filters.experienceLevel));
+            } else if (filters.industry && filters.industry !== 'all') {
+                constraints.push(where('industry', '==', filters.industry));
             }
 
-            //add ordering and pagination
-            contsrains.push(orderBy('postedAt', 'desc'));
-            contsrains.push(limit(10));
+            // Add ordering and pagination
+            constraints.push(orderBy('postedAt', 'desc'));
+            constraints.push(limit(10));
 
             if (loadMore && lastDoc) {
-                contsrains.push(startAfter(lastDoc));
+                constraints.push(startAfter(lastDoc));
             }
 
-            jobQuery = query(jobQuery, ...contsrains);
-            const snapshot = await getDocs(jobQuery);
+            const finalQuery = query(jobCollection, ...constraints);
+            const snapshot = await getDocs(finalQuery);
 
-            const jobList = snapshot.docs.map(doc => ({
+            let jobList = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
+
+            // Apply remaining filters client-side
+            if (filters.location && filters.location !== 'all') {
+                // Location filter already applied server-side
+            } else {
+                // Apply other filters client-side
+                if (filters.jobType && filters.jobType !== 'all') {
+                    jobList = jobList.filter(job => job.jobType === filters.jobType);
+                }
+                if (filters.experienceLevel && filters.experienceLevel !== 'all') {
+                    jobList = jobList.filter(job => job.experienceLevel === filters.experienceLevel);
+                }
+                if (filters.industry && filters.industry !== 'all') {
+                    jobList = jobList.filter(job => job.industry === filters.industry);
+                }
+            }
 
             if (loadMore) {
                 setJobs(prev => [...prev, ...jobList]);
@@ -91,11 +105,11 @@ export function JobProvider({ children }) {
                 setJobs(jobList);
             }
 
+            // Update pagination state
             setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
             setHasMore(snapshot.docs.length === 10);
 
             return jobList;
-
         } catch (error) {
             console.error('Error fetching jobs:', error);
             throw error;
@@ -109,29 +123,38 @@ export function JobProvider({ children }) {
         try {
             setLoading(true);
 
-            const jobQuery = collection(db, 'jobs');
-            let contsrains = [where('isActive', '===', true)];
+            const jobCollection = collection(db, 'jobs');
+            let constraints = [where('isActive', '==', true)];
 
-            //apply filters
+            // Only add one server-side filter to avoid index requirements
             if (filters.location && filters.location !== 'all') {
-                contsrains.push(where('location', '==', filters.location));
-            }
-            if (filters.jobType && filters.jobType !== 'all') {
-                contsrains.push(where('jobType', '==', filters.jobType));
+                constraints.push(where('location', '==', filters.location));
             }
 
-            contsrains.push(orderBy('postedAt', 'desc'));
-            jobQuery = query(jobQuery, ...contsrains);
+            constraints.push(orderBy('postedAt', 'desc'));
+            const finalQuery = query(jobCollection, ...constraints);
 
-            const snapshot = await getDocs(jobQuery);
-            let joblist = snapshot.docs.map(doc => ({
+            const snapshot = await getDocs(finalQuery);
+            let jobList = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
 
+            // Apply all other filters client-side
+            if (filters.jobType && filters.jobType !== 'all') {
+                jobList = jobList.filter(job => job.jobType === filters.jobType);
+            }
+            if (filters.experienceLevel && filters.experienceLevel !== 'all') {
+                jobList = jobList.filter(job => job.experienceLevel === filters.experienceLevel);
+            }
+            if (filters.industry && filters.industry !== 'all') {
+                jobList = jobList.filter(job => job.industry === filters.industry);
+            }
+
+            // Client-side search filtering
             if (searchTerm) {
                 const searchLower = searchTerm.toLowerCase();
-                joblist = joblist.filter(job =>
+                jobList = jobList.filter(job =>
                     job.title?.toLowerCase().includes(searchLower) ||
                     job.companyName?.toLowerCase().includes(searchLower) ||
                     job.description?.toLowerCase().includes(searchLower) ||
@@ -139,11 +162,10 @@ export function JobProvider({ children }) {
                 );
             }
 
-            setJobs(joblist);
-            return joblist;
-
+            setJobs(jobList);
+            return jobList;
         } catch (error) {
-            console.error('Error searching jobs', error);
+            console.error('Error searching jobs:', error);
             throw error;
         } finally {
             setLoading(false);
