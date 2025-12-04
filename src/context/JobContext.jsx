@@ -66,15 +66,20 @@ export function JobProvider({ children }) {
             const jobCollection = collection(db, 'jobs');
             let constraints = [where('isActive', '==', true)];
 
-            // Only add one filter at a time to avoid complex index requirements
-            // Priority order: location > jobType > experienceLevel > industry
+            // Apply filters
             if (filters.location && filters.location !== 'all') {
                 constraints.push(where('location', '==', filters.location));
-            } else if (filters.jobType && filters.jobType !== 'all') {
+            }
+
+            if (filters.jobType && filters.jobType !== 'all') {
                 constraints.push(where('jobType', '==', filters.jobType));
-            } else if (filters.experienceLevel && filters.experienceLevel !== 'all') {
+            }
+
+            if (filters.experienceLevel && filters.experienceLevel !== 'all') {
                 constraints.push(where('experienceLevel', '==', filters.experienceLevel));
-            } else if (filters.industry && filters.industry !== 'all') {
+            }
+
+            if (filters.industry && filters.industry !== 'all') {
                 constraints.push(where('industry', '==', filters.industry));
             }
 
@@ -89,26 +94,10 @@ export function JobProvider({ children }) {
             const finalQuery = query(jobCollection, ...constraints);
             const snapshot = await getDocs(finalQuery);
 
-            let jobList = snapshot.docs.map(doc => ({
+            const jobList = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
             }));
-
-            // Apply remaining filters client-side
-            if (filters.location && filters.location !== 'all') {
-                // Location filter already applied server-side
-            } else {
-                // Apply other filters client-side
-                if (filters.jobType && filters.jobType !== 'all') {
-                    jobList = jobList.filter(job => job.jobType === filters.jobType);
-                }
-                if (filters.experienceLevel && filters.experienceLevel !== 'all') {
-                    jobList = jobList.filter(job => job.experienceLevel === filters.experienceLevel);
-                }
-                if (filters.industry && filters.industry !== 'all') {
-                    jobList = jobList.filter(job => job.industry === filters.industry);
-                }
-            }
 
             if (loadMore) {
                 setJobs(prev => [...prev, ...jobList]);
@@ -123,6 +112,32 @@ export function JobProvider({ children }) {
             return jobList;
         } catch (error) {
             console.error('Error fetching jobs:', error);
+
+            // If it's a permission error, try a simpler query
+            if (error.code === 'permission-denied') {
+                try {
+                    console.log('Trying simpler query due to permission error...');
+                    const simpleQuery = query(
+                        collection(db, 'jobs'),
+                        where('isActive', '==', true),
+                        orderBy('postedAt', 'desc'),
+                        limit(10)
+                    );
+
+                    const snapshot = await getDocs(simpleQuery);
+                    const jobList = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+
+                    setJobs(jobList);
+                    return jobList;
+                } catch (simpleError) {
+                    console.error('Simple query also failed:', simpleError);
+                    throw simpleError;
+                }
+            }
+
             throw error;
         } finally {
             setLoading(false);
